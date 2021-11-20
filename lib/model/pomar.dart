@@ -1,7 +1,7 @@
 import 'package:pomar_app/model/arvore.dart';
 
 class Pomar {
-  int codigo = 0;
+  int? codigo;
   String nome = "";
   String descricao = "";
   List<Arvore> arvores = [];

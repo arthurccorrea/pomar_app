@@ -1,6 +1,7 @@
+import 'dart:developer';
+
 import 'package:pomar_app/dao/dao.dart';
 import 'package:pomar_app/model/arvore.dart';
-import 'package:pomar_app/model/pomar.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ArvoreDao extends Dao {
@@ -8,6 +9,7 @@ class ArvoreDao extends Dao {
 
   Future<Arvore> save(Arvore arvore) async {
     final database = await openDatabaseConnection();
+    log("Salvando ${arvore.toString()}");
     int codigo = await database.insert(
       databaseName,
       arvore.toMap(),
@@ -26,11 +28,11 @@ class ArvoreDao extends Dao {
     return codigo == 0 ? Arvore() : await findByCodigo(codigo);
   }
 
-  Future<bool> delete(Pomar pomar) async {
+  Future<bool> delete(Arvore arvore) async {
     final database = await openDatabaseConnection();
 
     int linhasAfetadas = await database
-        .delete(databaseName, where: "CODIGO=?", whereArgs: [pomar.codigo]);
+        .delete(databaseName, where: "CODIGO=?", whereArgs: [arvore.codigo]);
     return linhasAfetadas > 0;
   }
 

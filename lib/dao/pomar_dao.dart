@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:pomar_app/dao/arvore_dao.dart';
 import 'package:pomar_app/dao/dao.dart';
+import 'package:pomar_app/model/arvore.dart';
 import 'package:pomar_app/model/pomar.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -7,11 +11,15 @@ class PomarDao extends Dao {
 
   Future<Pomar> save(Pomar pomar) async {
     final database = await openDatabaseConnection();
+    log("Salvando ${pomar.toString()}");
     int codigo = await database.insert(
       databaseName,
       pomar.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
+    if (codigo != 0) {
+      log("Pomar salvo");
+    }
     return codigo == 0 ? Pomar() : await findByCodigo(codigo);
   }
 
@@ -35,7 +43,7 @@ class PomarDao extends Dao {
 
   Future<List<Pomar>> list() async {
     final database = await openDatabaseConnection();
-
+    log("Listando pomares");
     List<Map<String, Object?>> maps = await database.query(databaseName);
 
     List<Pomar> pomares = List.generate(maps.length, (index) {
@@ -54,8 +62,12 @@ class PomarDao extends Dao {
     List<Pomar> pomares = List.generate(maps.length, (index) {
       return setValues(maps, index);
     });
+    ArvoreDao arvoreDao = ArvoreDao();
+    Pomar pomar = pomares[0];
+    List<Arvore> arvores = await arvoreDao.findByPomar(codigo);
+    pomar.arvores = arvores;
 
-    return pomares[0];
+    return pomar;
   }
 
   Pomar setValues(List<Map<String, Object?>> maps, int index) {

@@ -1,5 +1,5 @@
 class Colheita {
-  int codigo = 0;
+  int? codigo;
   int arvoreCodigo = 0;
   String informacoes = "";
   DateTime? data;
@@ -14,6 +14,7 @@ class Colheita {
     arvoreCodigo = colheitaMap['arvoreCodigo'];
     informacoes = colheitaMap['informacoes'];
     data = colheitaMap['data'];
+    pesoBruto = colheitaMap['pesoBruto'];
   }
 
   Map<String, dynamic> toMap() {

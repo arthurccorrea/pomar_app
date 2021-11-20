@@ -1,5 +1,5 @@
 class Arvore {
-  int codigo = 0;
+  int? codigo;
   int pomarCodigo = 0;
   int especieCodigo = 0;
   String descricao = "";

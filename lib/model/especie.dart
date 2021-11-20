@@ -1,5 +1,5 @@
 class Especie {
-  int codigo = 0;
+  int? codigo;
   String descricao = "";
 
   Especie();
