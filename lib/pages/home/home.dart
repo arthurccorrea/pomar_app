@@ -3,10 +3,8 @@ import 'package:pomar_app/core/constants.dart';
 import 'package:pomar_app/core/util/page_util.dart';
 import 'package:pomar_app/core/widgets/gradient_container_body.dart';
 import 'package:pomar_app/model/pomar.dart';
-import 'package:pomar_app/pages/home/providers/pomar_list_provider.dart';
 import 'package:pomar_app/pages/home/widgets/pomar_future_builder.dart';
 import 'package:pomar_app/pages/pomar/cadastro_pomar.dart';
-import 'package:provider/provider.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

@@ -1,9 +1,15 @@
+import 'package:pomar_app/model/especie.dart';
+import 'package:pomar_app/model/pomar.dart';
+
 class Arvore {
   int? codigo;
   int pomarCodigo = 0;
   int especieCodigo = 0;
   String descricao = "";
   DateTime? dataPlantio;
+
+  Pomar? pomar;
+  Especie? especie;
 
   Arvore();
 
@@ -12,7 +18,7 @@ class Arvore {
     pomarCodigo = arvoreMap['pomarCodigo'];
     especieCodigo = arvoreMap['especieCodigo'];
     descricao = arvoreMap['descricao'];
-    dataPlantio = arvoreMap['dataPlatio'];
+    dataPlantio = DateTime.fromMicrosecondsSinceEpoch(arvoreMap['dataPlantio']);
   }
 
   Map<String, dynamic> toMap() {
@@ -21,7 +27,7 @@ class Arvore {
       'POMAR_CODIGO': pomarCodigo,
       'ESPECIE_CODIGO': especieCodigo,
       'DESCRICAO': descricao,
-      'DATA_PLANTIO': dataPlantio
+      'DATA_PLANTIO': dataPlantio!.millisecondsSinceEpoch
     };
   }
 

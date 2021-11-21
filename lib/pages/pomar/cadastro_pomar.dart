@@ -8,6 +8,7 @@ import 'package:pomar_app/dao/pomar_dao.dart';
 import 'package:pomar_app/model/arvore.dart';
 import 'package:pomar_app/model/pomar.dart';
 import 'package:pomar_app/pages/arvore/cadastro_arvore.dart';
+import 'package:pomar_app/pages/arvore/selecionar_especie.dart';
 import 'package:pomar_app/pages/home/providers/pomar_list_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -58,7 +59,6 @@ class _CadastroPomarState extends State<CadastroPomar> {
                       }),
                   const Padding(
                       padding: EdgeInsets.only(top: defaultVerticalPadding)),
-                  // if (!isNovo)
                   DefaultButton(
                     isNovo ? "Adicionar" : "Alterar",
                     Colors.white,
@@ -67,21 +67,46 @@ class _CadastroPomarState extends State<CadastroPomar> {
                     onPressed: () async {
                       await save();
                     },
-                  )
+                  ),
+                  if (!isNovo)
+                    Padding(
+                        padding: EdgeInsets.only(top: defaultVerticalPadding),
+                        child: ListView.builder(
+                          itemCount: widget.pomar.arvores.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) => Card(
+                            child: Text(widget.pomar.arvores[index].descricao),
+                          ),
+                        )),
                 ],
               ))),
       floatingActionButton: !isNovo
           ? FloatingActionButton(
+              backgroundColor: Colors.green,
               tooltip: "Adicionar arvore",
               child: Stack(
                 children: [
-                  Icon(Icons.add),
+                  Align(
+                    child: Image.asset(
+                      "images/tree.png",
+                      color: Colors.black,
+                    ),
+                    alignment: Alignment.center,
+                  ),
+                  Align(
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 40,
+                    ),
+                    alignment: Alignment.center,
+                  ),
                 ],
               ),
               onPressed: () {
                 Arvore arvore = Arvore();
                 arvore.pomarCodigo = widget.pomar.codigo!;
-                PageUtil.navigate(CadastroArvore(arvore: arvore), context);
+                PageUtil.navigate(SelecionarEspecie(arvore: arvore), context);
               },
             )
           : null,

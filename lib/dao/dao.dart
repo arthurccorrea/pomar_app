@@ -5,12 +5,9 @@ import 'package:sqflite/sqflite.dart';
 class Dao {
   Future<Database> openDatabaseConnection() async {
     WidgetsFlutterBinding.ensureInitialized();
-    Database database = await openDatabase(
-        // Set the path to the database. Note: Using the `join` function from the
-        // `path` package is best practice to ensure the path is correctly
-        // constructed for each platform.
-        join(await getDatabasesPath(), 'pomar_database.db'),
-        onCreate: (db, version) {
+    Database database =
+        await openDatabase(join(await getDatabasesPath(), 'pomar_database.db'),
+            onCreate: (db, version) {
       db.execute(
           "CREATE TABLE POMAR(CODIGO INTEGER PRIMARY KEY NOT NULL, NOME TEXT NOT NULL, DESCRICAO TEXT NOT NULL DEFAULT \"\")");
       db.execute(

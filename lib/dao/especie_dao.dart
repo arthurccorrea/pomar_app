@@ -5,7 +5,7 @@ import 'package:pomar_app/model/especie.dart';
 import 'package:sqflite/sqflite.dart';
 
 class EspecieDao extends Dao {
-  final String databaseName = "POMAR";
+  final String databaseName = "ESPECIE";
 
   Future<Especie> save(Especie especie) async {
     final database = await openDatabaseConnection();

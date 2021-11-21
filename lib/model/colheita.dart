@@ -13,7 +13,7 @@ class Colheita {
     codigo = colheitaMap['codigo'];
     arvoreCodigo = colheitaMap['arvoreCodigo'];
     informacoes = colheitaMap['informacoes'];
-    data = colheitaMap['data'];
+    data = DateTime.fromMillisecondsSinceEpoch(colheitaMap['data']);
     pesoBruto = colheitaMap['pesoBruto'];
   }
 
@@ -22,7 +22,7 @@ class Colheita {
       'CODIGO': codigo,
       'ARVORE_CODIGO': arvoreCodigo,
       'INFORMACOES': informacoes,
-      'DATA': data
+      'DATA': data!.millisecondsSinceEpoch
     };
   }
 
