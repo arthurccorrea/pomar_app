@@ -30,7 +30,7 @@ class _PomarCardState extends State<PomarCard> {
                 colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.2), BlendMode.dstATop))),
         child: Center(
-          child: Text(widget.pomar.nome),
+          child: Text(widget.pomar.nome, style: TextStyle(color: Colors.black),),
         ),
       ),
     );

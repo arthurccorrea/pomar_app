@@ -18,7 +18,7 @@ class Arvore {
     pomarCodigo = arvoreMap['pomarCodigo'];
     especieCodigo = arvoreMap['especieCodigo'];
     descricao = arvoreMap['descricao'];
-    dataPlantio = DateTime.fromMicrosecondsSinceEpoch(arvoreMap['dataPlantio']);
+    dataPlantio = DateTime.fromMillisecondsSinceEpoch(arvoreMap['dataPlantio']);
   }
 
   Map<String, dynamic> toMap() {

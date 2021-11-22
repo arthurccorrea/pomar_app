@@ -60,7 +60,7 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                       child: Card(
                           child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Icon(Icons.add), Text("Adicionar novo")],
+                        children: [Icon(Icons.add), Text("Adicionar novo", style: TextStyle(color: Colors.black),)],
                       )),
                     );
                   }
@@ -74,7 +74,7 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                     },
                     child: Card(
                       child:
-                          Center(child: Text("${especies[index].descricao}")),
+                          Center(child: Text("${especies[index].descricao}", style: TextStyle(color: Colors.black),)),
                     ),
                   );
                 },

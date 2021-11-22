@@ -1,39 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pomar_app/core/constants.dart';
-import 'package:pomar_app/core/util/page_util.dart';
 import 'package:pomar_app/core/widgets/default_button.dart';
 import 'package:pomar_app/core/widgets/default_input_field.dart';
 import 'package:pomar_app/core/widgets/gradient_container_body.dart';
-import 'package:pomar_app/dao/arvore_dao.dart';
-import 'package:pomar_app/model/arvore.dart';
+import 'package:pomar_app/dao/colheita_dao.dart';
 import 'package:pomar_app/model/colheita.dart';
-import 'package:pomar_app/pages/colheita/colheita.dart';
 
-class CadastroArvore extends StatefulWidget {
-  final Arvore arvore;
-  CadastroArvore({required this.arvore, Key? key}) : super(key: key);
+class CadastroColheita extends StatefulWidget {
+  final Colheita colheita;
+  CadastroColheita({required this.colheita, Key? key}) : super(key: key);
 
   @override
-  _CadastroArvoreState createState() => _CadastroArvoreState();
+  CadastroColheitaState createState() => CadastroColheitaState();
 }
 
-class _CadastroArvoreState extends State<CadastroArvore> {
+class CadastroColheitaState extends State<CadastroColheita> {
   Key _formKey = GlobalKey<FormState>();
-  TextEditingController _descricaoController = TextEditingController();
-  DateTime? dataDePlantio;
+  TextEditingController _informacoesController = TextEditingController();
+  DateTime? data;
   bool isNovo = false;
-
+  
   @override
   void initState() {
-    isNovo = widget.arvore.codigo == null || widget.arvore.codigo == 0;
+    isNovo = widget.colheita.codigo == null || widget.colheita.codigo == 0;
     if (!isNovo) {
-      _descricaoController.text = widget.arvore.descricao;
-      dataDePlantio = widget.arvore.dataPlantio;
+      _informacoesController.text = widget.colheita.informacoes;
+      data = widget.colheita.data;
     }
-    super.initState();
+    
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,10 +41,10 @@ class _CadastroArvoreState extends State<CadastroArvore> {
             child: ListView(
               children: [
                 DefaultInputField(
-                    labelTextValue: "Descricao",
-                    controller: _descricaoController,
+                    labelTextValue: "Informações",
+                    controller: _informacoesController,
                     onChanged: (value) {
-                      widget.arvore.descricao = value;
+                      widget.colheita.informacoes = value;
                     }),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -58,9 +54,9 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Text(
-                        dataDePlantio == null
-                            ? 'Escolha um data de plantio!'
-                            : 'Data do plantio: ${DateFormat("dd/MM/yyyy").format(dataDePlantio!)}',
+                        data == null
+                            ? 'Escolha um data de colheita!'
+                            : 'Data do colheita: ${DateFormat("dd/MM/yyyy").format(data!)}',
                         style: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -80,21 +76,17 @@ class _CadastroArvoreState extends State<CadastroArvore> {
               ],
             ),
           )),
-          floatingActionButton: !isNovo ? FloatingActionButton(
-            child: Stack(
-              children: [
-                Align(alignment: Alignment.center, child: Image.asset("images/harvest.png", scale: 12,)),
-                Align(alignment: Alignment.center ,child: Icon(Icons.add, size: 30,)),
-              ],
-            ),
-            backgroundColor: Colors.green,
-            tooltip: "Colheita\nIcone por \nhttps://www.flaticon.com/authors/maxicons",
-            onPressed: () {
-              Colheita colheita = Colheita();
-              colheita.arvoreCodigo = widget.arvore.codigo!;
-              PageUtil.navigate(CadastroColheita(colheita: colheita), context);
-            }) : null,
     );
+  }
+
+  Future<void> save() async {
+    ColheitaDao colheitaDao = ColheitaDao();
+    Colheita colheita;
+    if (isNovo) {
+       colheita = await colheitaDao.save(widget.colheita);
+    } else {
+      colheita = await colheitaDao.update(widget.colheita);
+    }
   }
 
   void _pickDateDialog() {
@@ -108,19 +100,9 @@ class _CadastroArvoreState extends State<CadastroArvore> {
         return;
       }
       setState(() {
-        dataDePlantio = pickedDate;
-        widget.arvore.dataPlantio = pickedDate;
+        data = pickedDate;
+        widget.colheita.data = pickedDate;
       });
     });
-  }
-
-  Future<void> save() async {
-    ArvoreDao arvoreDao = ArvoreDao();
-    Arvore arvore;
-    if (isNovo) {
-       arvore = await arvoreDao.save(widget.arvore);
-    } else {
-      arvore = await arvoreDao.update(widget.arvore);
-    } 
   }
 }

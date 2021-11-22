@@ -38,48 +38,78 @@ class _CadastroPomarState extends State<CadastroPomar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: GradientContainerBody(
-          padding: const EdgeInsets.all(8),
-          child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  DefaultInputField(
-                      labelTextValue: "Nome",
-                      controller: _nomeController,
-                      defaultValidation: true,
-                      onChanged: (value) {
-                        widget.pomar.nome = value;
-                      }),
-                  DefaultInputField(
-                      labelTextValue: "Descricao",
-                      controller: _descricaoController,
-                      onChanged: (value) {
-                        widget.pomar.descricao = value;
-                      }),
-                  const Padding(
-                      padding: EdgeInsets.only(top: defaultVerticalPadding)),
-                  DefaultButton(
-                    isNovo ? "Adicionar" : "Alterar",
-                    Colors.white,
-                    Colors.black,
-                    minWidth: MediaQuery.of(context).size.width,
-                    onPressed: () async {
-                      await save();
-                    },
-                  ),
-                  if (!isNovo)
-                    Padding(
-                        padding: EdgeInsets.only(top: defaultVerticalPadding),
-                        child: ListView.builder(
-                          itemCount: widget.pomar.arvores.length,
-                          shrinkWrap: true,
-                          itemBuilder: (context, index) => Card(
-                            child: Text(widget.pomar.arvores[index].descricao),
-                          ),
-                        )),
-                ],
-              ))),
+      body: SingleChildScrollView(
+        child: GradientContainerBody(
+            padding: const EdgeInsets.all(8),
+            child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    DefaultInputField(
+                        labelTextValue: "Nome",
+                        controller: _nomeController,
+                        defaultValidation: true,
+                        onChanged: (value) {
+                          widget.pomar.nome = value;
+                        }),
+                    DefaultInputField(
+                        labelTextValue: "Descricao",
+                        controller: _descricaoController,
+                        onChanged: (value) {
+                          widget.pomar.descricao = value;
+                        }),
+                    const Padding(
+                        padding: EdgeInsets.only(top: defaultVerticalPadding)),
+                    DefaultButton(
+                      isNovo ? "Adicionar" : "Alterar",
+                      Colors.white,
+                      Colors.black,
+                      minWidth: MediaQuery.of(context).size.width,
+                      onPressed: () async {
+                        await save();
+                      },
+                    ),
+                    if (!isNovo)
+                      Column(
+                        children: [
+                          PageUtil.divider(context),
+                          Text("Arvores", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Padding(
+                              padding:
+                                  EdgeInsets.only(top: defaultVerticalPadding),
+                              child: GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: defaultHorizontalPadding,
+                                  mainAxisSpacing: defaultHorizontalPadding,
+                                ),
+                                itemCount: widget.pomar.arvores.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) =>
+                                    GestureDetector(
+                                  onTap: () {
+                                    PageUtil.navigate(
+                                        CadastroArvore(
+                                            arvore:
+                                                widget.pomar.arvores[index]),
+                                        context);
+                                  },
+                                  child: Card(
+                                    child: Center(
+                                      child: Text(
+                                        widget.pomar.arvores[index].descricao,
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
+                  ],
+                ))),
+      ),
       floatingActionButton: !isNovo
           ? FloatingActionButton(
               backgroundColor: Colors.green,

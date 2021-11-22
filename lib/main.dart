@@ -17,7 +17,9 @@ class MyApp extends StatelessWidget {
           locale: Locale('pt', 'BR'),
           title: 'Pomar app',
           theme: ThemeData(
+            primaryColor: Colors.green,
             appBarTheme: appBarTheme(),
+            textTheme: textTheme(),
           ),
           home: const HomePage(),
         ));
@@ -26,4 +28,9 @@ class MyApp extends StatelessWidget {
   AppBarTheme appBarTheme() {
     return const AppBarTheme(backgroundColor: Colors.green, centerTitle: true);
   }
+
+  TextTheme textTheme() {
+    return const TextTheme(bodyText2: TextStyle(color: Colors.white));
+  }
+
 }

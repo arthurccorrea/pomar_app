@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:pomar_app/core/constants.dart';
 
 class PageUtil {
   /// Invoca o método push do [Navigator] para o Widget passado por parâmetro
@@ -37,5 +38,25 @@ class PageUtil {
     Future.delayed(Duration.zero, () {
       Navigator.of(context).popUntil((route) => route.isFirst);
     });
+  }
+
+  /// Retorna o divider padrão na cor [Colors.white] e com Padding de 40% da tela pra esquerda e pra direita
+  /// Usado em diversas telas para separar informações e componentes
+  static Padding divider(BuildContext context,
+      {Color color = Colors.brown,
+      double? padding,
+      double? paddingVertical}) {
+    double paddingPadrao = MediaQuery.of(context).size.width * 0.30;
+    return Padding(
+      padding: EdgeInsets.only(
+          right: padding ?? paddingPadrao,
+          left: padding ?? paddingPadrao,
+          top: paddingVertical ?? defaultHorizontalPadding,
+          bottom: paddingVertical ?? defaultHorizontalPadding),
+      child: Divider(
+        color: color,
+        thickness: 2,
+      ),
+    );
   }
 }
