@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pomar_app/core/constants.dart';
 import 'package:pomar_app/core/widgets/default_button.dart';
 import 'package:pomar_app/core/widgets/default_input_field.dart';
@@ -18,18 +20,22 @@ class CadastroColheita extends StatefulWidget {
 class CadastroColheitaState extends State<CadastroColheita> {
   Key _formKey = GlobalKey<FormState>();
   TextEditingController _informacoesController = TextEditingController();
+  TextEditingController _pesoBrutoController = TextEditingController();
+  final _pesoBrutoFormatter = MaskTextInputFormatter(filter: {"#": RegExp( '^\$|^(0|([1-9][0-9]{0,}))(\\.[0-9]{0,})?\$')});
   DateTime? data;
   bool isNovo = false;
-  
+
   @override
   void initState() {
     isNovo = widget.colheita.codigo == null || widget.colheita.codigo == 0;
     if (!isNovo) {
       _informacoesController.text = widget.colheita.informacoes;
+      _pesoBrutoController.text = widget.colheita.pesoBruto.toString();
       data = widget.colheita.data;
     }
-    
+    super.initState();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,6 +51,20 @@ class CadastroColheitaState extends State<CadastroColheita> {
                     controller: _informacoesController,
                     onChanged: (value) {
                       widget.colheita.informacoes = value;
+                    }),
+                DefaultInputField(
+                    labelTextValue: "Peso bruto",
+                    controller: _pesoBrutoController,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                    ],
+                    tipoTeclado: TextInputType.number,
+                    onChanged: (value) {
+                      if (value.isEmpty) {
+                        widget.colheita.pesoBruto = 0;
+                      } else {
+                        widget.colheita.pesoBruto = double.parse(value);
+                      }
                     }),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -83,7 +103,7 @@ class CadastroColheitaState extends State<CadastroColheita> {
     ColheitaDao colheitaDao = ColheitaDao();
     Colheita colheita;
     if (isNovo) {
-       colheita = await colheitaDao.save(widget.colheita);
+      colheita = await colheitaDao.save(widget.colheita);
     } else {
       colheita = await colheitaDao.update(widget.colheita);
     }

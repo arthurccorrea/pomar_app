@@ -8,7 +8,7 @@ import 'package:pomar_app/core/widgets/gradient_container_body.dart';
 import 'package:pomar_app/dao/arvore_dao.dart';
 import 'package:pomar_app/model/arvore.dart';
 import 'package:pomar_app/model/colheita.dart';
-import 'package:pomar_app/pages/colheita/colheita.dart';
+import 'package:pomar_app/pages/colheita/cadastro_colheita.dart';
 
 class CadastroArvore extends StatefulWidget {
   final Arvore arvore;
@@ -76,7 +76,45 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                   onPressed: () async {
                     await save();
                   },
-                )
+                ),
+                if (!isNovo)
+                      Column(
+                        children: [
+                          PageUtil.divider(context),
+                          Text("Colheitas", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                          Padding(
+                              padding:
+                                  EdgeInsets.only(top: defaultVerticalPadding),
+                              child: GridView.builder(
+                                gridDelegate:
+                                    SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: defaultHorizontalPadding,
+                                  mainAxisSpacing: defaultHorizontalPadding,
+                                ),
+                                itemCount: widget.arvore.colheitas.length,
+                                shrinkWrap: true,
+                                itemBuilder: (context, index) =>
+                                    GestureDetector(
+                                  onTap: () {
+                                    PageUtil.navigate(
+                                        CadastroColheita(
+                                            colheita:
+                                                widget.arvore.colheitas[index]),
+                                        context);
+                                  },
+                                  child: Card(
+                                    child: Center(
+                                      child: Text(
+                                        widget.arvore.colheitas[index].informacoes,
+                                        style: TextStyle(color: Colors.black),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
+                      ),
               ],
             ),
           )),

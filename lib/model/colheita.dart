@@ -22,7 +22,8 @@ class Colheita {
       'CODIGO': codigo,
       'ARVORE_CODIGO': arvoreCodigo,
       'INFORMACOES': informacoes,
-      'DATA': data!.millisecondsSinceEpoch
+      'DATA': data!.millisecondsSinceEpoch,
+      'PESO_BRUTO' : pesoBruto
     };
   }
 

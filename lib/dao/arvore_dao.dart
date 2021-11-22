@@ -1,7 +1,9 @@
 import 'dart:developer';
 
+import 'package:pomar_app/dao/colheita_dao.dart';
 import 'package:pomar_app/dao/dao.dart';
 import 'package:pomar_app/model/arvore.dart';
+import 'package:pomar_app/model/colheita.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ArvoreDao extends Dao {
@@ -71,6 +73,14 @@ class ArvoreDao extends Dao {
     List<Arvore> arvores = List.generate(maps.length, (index) {
       return setValues(maps, index);
     });
+
+    ColheitaDao colheitaDao = ColheitaDao();
+    for (Arvore arvore in arvores) {
+      List<Colheita> colheitas = await colheitaDao.findByArvore(arvore.codigo!, database: database);
+      if (colheitas.isNotEmpty) {
+        arvore.colheitas = colheitas;
+      }
+    }
 
     return arvores;
   }

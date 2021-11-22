@@ -1,3 +1,4 @@
+import 'package:pomar_app/model/colheita.dart';
 import 'package:pomar_app/model/especie.dart';
 import 'package:pomar_app/model/pomar.dart';
 
@@ -10,6 +11,7 @@ class Arvore {
 
   Pomar? pomar;
   Especie? especie;
+  List<Colheita> colheitas = [];
 
   Arvore();
 

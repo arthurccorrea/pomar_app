@@ -61,6 +61,19 @@ class ColheitaDao extends Dao {
     return colheita[0];
   }
 
+  Future<List<Colheita>> findByArvore(int arvoreCodigo, {Database? database}) async {
+    database ??= await openDatabaseConnection();
+
+    List<Map<String, Object?>> maps = await database
+        .query(databaseName, where: "ARVORE_CODIGO=?", whereArgs: [arvoreCodigo]);
+
+    List<Colheita> colheitas = List.generate(maps.length, (index) {
+      return setValues(maps, index);
+    });
+
+    return colheitas;
+  } 
+
   Colheita setValues(List<Map<String, Object?>> maps, int index) {
     return Colheita.fromMap({
       'codigo': maps[index]['CODIGO'],
