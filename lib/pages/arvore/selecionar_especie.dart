@@ -60,7 +60,13 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                       child: Card(
                           child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [Icon(Icons.add), Text("Adicionar novo", style: TextStyle(color: Colors.black),)],
+                        children: const [
+                          Icon(Icons.add),
+                          Text(
+                            "Adicionar novo",
+                            style: TextStyle(color: Colors.black),
+                          )
+                        ],
                       )),
                     );
                   }
@@ -73,8 +79,11 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                           CadastroArvore(arvore: widget.arvore), context);
                     },
                     child: Card(
-                      child:
-                          Center(child: Text(especies[index].descricao, style: const TextStyle(color: Colors.black),)),
+                      child: Center(
+                          child: Text(
+                        especies[index].descricao,
+                        style: const TextStyle(color: Colors.black),
+                      )),
                     ),
                   );
                 },
@@ -88,27 +97,34 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
   }
 
   AlertDialog adicionarEspecieDialog(BuildContext context) {
+    GlobalKey<FormState> formKey = GlobalKey<FormState>();
     return AlertDialog(
       backgroundColor: Colors.green,
-      content: DefaultInputField(
-          labelTextValue: "Descrição",
-          controller: _descricaoController,
-          onChanged: (value) {
-            especieAdd!.descricao = value;
-          }),
+      content: Form(
+        key: formKey,
+        child: DefaultInputField(
+            labelTextValue: "Descrição",
+            controller: _descricaoController,
+            defaultValidation: true,
+            onChanged: (value) {
+              especieAdd!.descricao = value;
+            }),
+      ),
       actions: [
         DefaultButton(
           "Adicionar",
           Colors.transparent,
           Colors.black,
           onPressed: () async {
-            EspecieDao especieDao = EspecieDao();
-            Especie especie = await especieDao.save(especieAdd!);
-            setState(() {
-              especies.add(especie);
-            });
-            EspecieCache.resetCache();
-            Navigator.pop(context);
+            if (formKey.currentState!.validate()) {
+              EspecieDao especieDao = EspecieDao();
+              Especie especie = await especieDao.save(especieAdd!);
+              setState(() {
+                especies.add(especie);
+              });
+              EspecieCache.resetCache();
+              Navigator.pop(context);
+            }
           },
         )
       ],

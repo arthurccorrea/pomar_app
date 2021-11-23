@@ -24,7 +24,7 @@ class CadastroPomar extends StatefulWidget {
 class _CadastroPomarState extends State<CadastroPomar> {
   final TextEditingController _nomeController = TextEditingController();
   final TextEditingController _descricaoController = TextEditingController();
-  final Key _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool isNovo = false;
 
   @override
@@ -60,6 +60,7 @@ class _CadastroPomarState extends State<CadastroPomar> {
                       DefaultInputField(
                           labelTextValue: "Descricao",
                           controller: _descricaoController,
+                          defaultValidation: true,
                           onChanged: (value) {
                             widget.pomar.descricao = value;
                           }),
@@ -72,7 +73,9 @@ class _CadastroPomarState extends State<CadastroPomar> {
                         Colors.black,
                         minWidth: MediaQuery.of(context).size.width,
                         onPressed: () async {
-                          await save();
+                          if (_formKey.currentState!.validate()) {
+                            await save();
+                          }
                         },
                       ),
                       if (!isNovo)

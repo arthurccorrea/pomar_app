@@ -20,7 +20,7 @@ class CadastroColheita extends StatefulWidget {
 }
 
 class CadastroColheitaState extends State<CadastroColheita> {
-  final Key _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _informacoesController = TextEditingController();
   final TextEditingController _pesoBrutoController = TextEditingController();
   DateTime? data;
@@ -50,12 +50,14 @@ class CadastroColheitaState extends State<CadastroColheita> {
                 DefaultInputField(
                     labelTextValue: "Informações",
                     controller: _informacoesController,
+                    defaultValidation: true,
                     onChanged: (value) {
                       widget.colheita.informacoes = value;
                     }),
                 DefaultInputField(
                     labelTextValue: "Peso bruto",
                     controller: _pesoBrutoController,
+                    defaultValidation: true,
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(
                           RegExp(r'^\d+\.?\d{0,2}')),
@@ -92,7 +94,14 @@ class CadastroColheitaState extends State<CadastroColheita> {
                   Colors.white,
                   Colors.green,
                   onPressed: () async {
-                    await save();
+                    if (_formKey.currentState!.validate()) {
+                      if (data == null) {
+                        PageUtil.warningAlertDialog(
+                            "Por favor, escolha a data da colheita", context);
+                        return;
+                      }
+                      await save();
+                    }
                   },
                 )
               ],
@@ -107,11 +116,13 @@ class CadastroColheitaState extends State<CadastroColheita> {
         ? await colheitaDao.save(widget.colheita)
         : await colheitaDao.update(widget.colheita);
     if (colheita.codigo != null && colheita.codigo != 0) {
-      PomarListProvider pomarListProvider = Provider.of<PomarListProvider>(context, listen: false);
+      PomarListProvider pomarListProvider =
+          Provider.of<PomarListProvider>(context, listen: false);
       if (isNovo) {
         widget.colheita.codigo = colheita.codigo;
         pomarListProvider.addColheita(colheita);
-        PageUtil.successAlertDialog("Colheita cadastrada com sucesso!", context);
+        PageUtil.successAlertDialog(
+            "Colheita cadastrada com sucesso!", context);
       } else {
         pomarListProvider.replaceColheita(colheita);
         PageUtil.successAlertDialog("Colheita alterada com sucesso!", context);
@@ -141,7 +152,7 @@ class CadastroColheitaState extends State<CadastroColheita> {
     });
   }
 
-   void reloadInputComponents(Colheita colheita) {
+  void reloadInputComponents(Colheita colheita) {
     isNovo = colheita.codigo == null || colheita.codigo == 0;
     if (!isNovo) {
       setState(() {

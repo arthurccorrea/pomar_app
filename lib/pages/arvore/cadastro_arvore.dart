@@ -22,7 +22,7 @@ class CadastroArvore extends StatefulWidget {
 }
 
 class _CadastroArvoreState extends State<CadastroArvore> {
-  final Key _formKey = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final TextEditingController _descricaoController = TextEditingController();
   DateTime? dataDePlantio;
   bool isNovo = false;
@@ -50,6 +50,7 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                 DefaultInputField(
                     labelTextValue: "Descricao",
                     controller: _descricaoController,
+                    defaultValidation: true,
                     onChanged: (value) {
                       widget.arvore.descricao = value;
                     }),
@@ -77,7 +78,14 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                   Colors.white,
                   Colors.green,
                   onPressed: () async {
-                    await save();
+                    if (_formKey.currentState!.validate()) {
+                      if (dataDePlantio == null) {
+                        PageUtil.warningAlertDialog(
+                            "Por favor, escolha um data de plantio", context);
+                        return;
+                      }
+                      await save();
+                    }
                   },
                 ),
                 if (!isNovo)
@@ -97,8 +105,8 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                               .where((a) => a.codigo == widget.arvore.codigo)
                               .first;
                           return Padding(
-                              padding:
-                                  const EdgeInsets.only(top: defaultVerticalPadding),
+                              padding: const EdgeInsets.only(
+                                  top: defaultVerticalPadding),
                               child: GridView.builder(
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
@@ -106,6 +114,7 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                                   crossAxisSpacing: defaultHorizontalPadding,
                                   mainAxisSpacing: defaultHorizontalPadding,
                                 ),
+                                controller: ScrollController(),
                                 itemCount: arvore.colheitas.length,
                                 shrinkWrap: true,
                                 itemBuilder: (context, index) =>
@@ -120,7 +129,8 @@ class _CadastroArvoreState extends State<CadastroArvore> {
                                     child: Center(
                                       child: Text(
                                         arvore.colheitas[index].informacoes,
-                                        style: const TextStyle(color: Colors.black),
+                                        style: const TextStyle(
+                                            color: Colors.black),
                                       ),
                                     ),
                                   ),
