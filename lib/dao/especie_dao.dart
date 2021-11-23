@@ -21,11 +21,11 @@ class EspecieDao extends Dao {
   Future<Especie> update(Especie especie) async {
     final database = await openDatabaseConnection();
 
-    int codigo = await database.update(databaseName, especie.toMap(),
+    int linhasAfetadas = await database.update(databaseName, especie.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [especie.codigo]);
-    return codigo == 0 ? Especie() : await findByCodigo(codigo);
+    return linhasAfetadas == 0 ? Especie() : await findByCodigo(especie.codigo!);
   }
 
   Future<bool> delete(Especie especie) async {

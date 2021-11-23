@@ -10,6 +10,7 @@ import 'package:pomar_app/model/pomar.dart';
 import 'package:pomar_app/pages/arvore/cadastro_arvore.dart';
 import 'package:pomar_app/pages/arvore/selecionar_especie.dart';
 import 'package:pomar_app/pages/home/providers/pomar_list_provider.dart';
+import 'package:pomar_app/pages/pomar/providers/list_arvore_provider.dart';
 import 'package:provider/provider.dart';
 
 class CadastroPomar extends StatefulWidget {
@@ -29,8 +30,10 @@ class _CadastroPomarState extends State<CadastroPomar> {
   @override
   void initState() {
     isNovo = widget.pomar.codigo == null || widget.pomar.codigo == 0;
-    _nomeController.text = widget.pomar.nome;
-    _descricaoController.text = widget.pomar.descricao;
+    if (!isNovo) {
+      _nomeController.text = widget.pomar.nome;
+      _descricaoController.text = widget.pomar.descricao;
+    }
     super.initState();
   }
 
@@ -38,77 +41,96 @@ class _CadastroPomarState extends State<CadastroPomar> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(),
-      body: SingleChildScrollView(
-        child: GradientContainerBody(
-            padding: const EdgeInsets.all(8),
-            child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    DefaultInputField(
-                        labelTextValue: "Nome",
-                        controller: _nomeController,
-                        defaultValidation: true,
-                        onChanged: (value) {
-                          widget.pomar.nome = value;
-                        }),
-                    DefaultInputField(
-                        labelTextValue: "Descricao",
-                        controller: _descricaoController,
-                        onChanged: (value) {
-                          widget.pomar.descricao = value;
-                        }),
-                    const Padding(
-                        padding: EdgeInsets.only(top: defaultVerticalPadding)),
-                    DefaultButton(
-                      isNovo ? "Adicionar" : "Alterar",
-                      Colors.white,
-                      Colors.black,
-                      minWidth: MediaQuery.of(context).size.width,
-                      onPressed: () async {
-                        await save();
-                      },
-                    ),
-                    if (!isNovo)
-                      Column(
-                        children: [
-                          PageUtil.divider(context),
-                          Text("Arvores", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                          Padding(
-                              padding:
-                                  EdgeInsets.only(top: defaultVerticalPadding),
-                              child: GridView.builder(
-                                gridDelegate:
-                                    SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: defaultHorizontalPadding,
-                                  mainAxisSpacing: defaultHorizontalPadding,
-                                ),
-                                itemCount: widget.pomar.arvores.length,
-                                shrinkWrap: true,
-                                itemBuilder: (context, index) =>
-                                    GestureDetector(
-                                  onTap: () {
-                                    PageUtil.navigate(
-                                        CadastroArvore(
-                                            arvore:
-                                                widget.pomar.arvores[index]),
-                                        context);
-                                  },
-                                  child: Card(
-                                    child: Center(
-                                      child: Text(
-                                        widget.pomar.arvores[index].descricao,
-                                        style: TextStyle(color: Colors.black),
+      body: ChangeNotifierProvider(
+        create: (context) => ListArvoreProvider(),
+        child: SingleChildScrollView(
+          child: GradientContainerBody(
+              padding: const EdgeInsets.all(8),
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      DefaultInputField(
+                          labelTextValue: "Nome",
+                          controller: _nomeController,
+                          defaultValidation: true,
+                          onChanged: (value) {
+                            widget.pomar.nome = value;
+                          }),
+                      DefaultInputField(
+                          labelTextValue: "Descricao",
+                          controller: _descricaoController,
+                          onChanged: (value) {
+                            widget.pomar.descricao = value;
+                          }),
+                      const Padding(
+                          padding:
+                              EdgeInsets.only(top: defaultVerticalPadding)),
+                      DefaultButton(
+                        isNovo ? "Adicionar" : "Alterar",
+                        Colors.white,
+                        Colors.black,
+                        minWidth: MediaQuery.of(context).size.width,
+                        onPressed: () async {
+                          await save();
+                        },
+                      ),
+                      if (!isNovo)
+                        Column(
+                          children: [
+                            PageUtil.divider(context),
+                            const Text("Arvores",
+                                style: TextStyle(
+                                    fontSize: 20, fontWeight: FontWeight.bold)),
+                            Consumer<PomarListProvider>(
+                              builder: (context, value, _) => Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: defaultVerticalPadding),
+                                  child: GridView.builder(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing:
+                                          defaultHorizontalPadding,
+                                      mainAxisSpacing: defaultHorizontalPadding,
+                                    ),
+                                    controller: ScrollController(),
+                                    itemCount: value
+                                        .getPomar(widget.pomar.codigo!)
+                                        .arvores
+                                        .length,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) =>
+                                        GestureDetector(
+                                      onTap: () {
+                                        PageUtil.navigate(
+                                            CadastroArvore(
+                                                arvore: value
+                                                    .getPomar(
+                                                        widget.pomar.codigo!)
+                                                    .arvores[index]),
+                                            context);
+                                      },
+                                      child: Card(
+                                        child: Center(
+                                          child: Text(
+                                            value
+                                                .getPomar(widget.pomar.codigo!)
+                                                .arvores[index]
+                                                .descricao,
+                                            style:
+                                                const TextStyle(color: Colors.black),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
-                                ),
-                              )),
-                        ],
-                      ),
-                  ],
-                ))),
+                                  )),
+                            ),
+                          ],
+                        ),
+                    ],
+                  ))),
+        ),
       ),
       floatingActionButton: !isNovo
           ? FloatingActionButton(
@@ -123,7 +145,7 @@ class _CadastroPomarState extends State<CadastroPomar> {
                     ),
                     alignment: Alignment.center,
                   ),
-                  Align(
+                  const Align(
                     child: Icon(
                       Icons.add,
                       color: Colors.white,
@@ -144,8 +166,11 @@ class _CadastroPomarState extends State<CadastroPomar> {
   }
 
   void reloadInputComponents(Pomar pomar) {
-    _nomeController.text = pomar.nome;
-    _descricaoController.text = pomar.descricao;
+    isNovo = pomar.codigo == null || pomar.codigo == 0;
+    if (!isNovo) {
+      _nomeController.text = pomar.nome;
+      _descricaoController.text = pomar.descricao;
+    }
   }
 
   Future<void> save() async {
@@ -158,9 +183,14 @@ class _CadastroPomarState extends State<CadastroPomar> {
           Provider.of<PomarListProvider>(context, listen: false);
       if (isNovo) {
         pomarListProvider.addPomar(pomar);
+        widget.pomar.codigo = pomar.codigo;
+        PageUtil.successAlertDialog("Pomar cadastrado com sucesso!", context);
       } else {
         pomarListProvider.replacePomar(pomar);
+        PageUtil.successAlertDialog("Pomar alterado com sucesso!", context);
       }
+    } else {
+      PageUtil.failureAlertDialog("Erro ao ${isNovo ? 'cadastrar' : 'alterar'} o pomar", context);
     }
     reloadInputComponents(pomar);
   }

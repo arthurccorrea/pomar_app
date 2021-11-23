@@ -15,7 +15,7 @@ class _GradientContainerBodyState extends State<GradientContainerBody> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        height: MediaQuery.of(context).size.height,
+      constraints: BoxConstraints(minHeight: MediaQuery.of(context).size.height),
         padding: widget.padding,
         decoration: BoxDecoration(
           gradient: LinearGradient(

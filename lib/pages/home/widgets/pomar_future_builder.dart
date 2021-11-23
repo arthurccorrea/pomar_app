@@ -22,7 +22,7 @@ class _PomarFutureBuilderState extends State<PomarFutureBuilder> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.active ||
             snapshot.connectionState == ConnectionState.waiting) {
-          return LoadingPage();
+          return const LoadingPage();
         }
         if (snapshot.connectionState == ConnectionState.done &&
             snapshot.data != null) {
@@ -31,9 +31,9 @@ class _PomarFutureBuilderState extends State<PomarFutureBuilder> {
                 Provider.of<PomarListProvider>(context, listen: false);
             _pomarListProvider.pomares = snapshot.data!;
           });
-          return PomarList();
+          return const PomarList();
         }
-        return LoadingPage();
+        return const LoadingPage();
       },
     );
   }

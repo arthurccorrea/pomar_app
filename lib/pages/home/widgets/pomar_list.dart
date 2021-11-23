@@ -20,7 +20,7 @@ class _PomarListState extends State<PomarList> {
           : GridView.builder(
               shrinkWrap: true,
               controller: ScrollController(),
-              padding: EdgeInsets.only(top: defaultHorizontalPadding),
+              padding: const EdgeInsets.only(top: defaultHorizontalPadding),
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: defaultHorizontalPadding,
@@ -39,7 +39,7 @@ class _PomaresVazio extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return const Center(
       child: Text(
         "Você ainda não tem pomares\nCadastre o seu primeiro pomar tocando no botão abaixo",
         style: TextStyle(

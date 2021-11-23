@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class ListArvores extends StatefulWidget {
-  ListArvores({Key? key}) : super(key: key);
+  const ListArvores({Key? key}) : super(key: key);
 
   @override
   _ListArvoresState createState() => _ListArvoresState();

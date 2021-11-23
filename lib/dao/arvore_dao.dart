@@ -23,11 +23,11 @@ class ArvoreDao extends Dao {
   Future<Arvore> update(Arvore arvore) async {
     final database = await openDatabaseConnection();
 
-    int codigo = await database.update(databaseName, arvore.toMap(),
+    int linhasAfetadas = await database.update(databaseName, arvore.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [arvore.codigo]);
-    return codigo == 0 ? Arvore() : await findByCodigo(codigo);
+    return linhasAfetadas == 0 ? Arvore() : await findByCodigo(arvore.codigo!);
   }
 
   Future<bool> delete(Arvore arvore) async {

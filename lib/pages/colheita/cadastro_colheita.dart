@@ -1,27 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pomar_app/core/constants.dart';
+import 'package:pomar_app/core/util/page_util.dart';
 import 'package:pomar_app/core/widgets/default_button.dart';
 import 'package:pomar_app/core/widgets/default_input_field.dart';
 import 'package:pomar_app/core/widgets/gradient_container_body.dart';
 import 'package:pomar_app/dao/colheita_dao.dart';
 import 'package:pomar_app/model/colheita.dart';
+import 'package:pomar_app/pages/home/providers/pomar_list_provider.dart';
+import 'package:provider/provider.dart';
 
 class CadastroColheita extends StatefulWidget {
   final Colheita colheita;
-  CadastroColheita({required this.colheita, Key? key}) : super(key: key);
+  const CadastroColheita({required this.colheita, Key? key}) : super(key: key);
 
   @override
   CadastroColheitaState createState() => CadastroColheitaState();
 }
 
 class CadastroColheitaState extends State<CadastroColheita> {
-  Key _formKey = GlobalKey<FormState>();
-  TextEditingController _informacoesController = TextEditingController();
-  TextEditingController _pesoBrutoController = TextEditingController();
-  final _pesoBrutoFormatter = MaskTextInputFormatter(filter: {"#": RegExp( '^\$|^(0|([1-9][0-9]{0,}))(\\.[0-9]{0,})?\$')});
+  final Key _formKey = GlobalKey<FormState>();
+  final TextEditingController _informacoesController = TextEditingController();
+  final TextEditingController _pesoBrutoController = TextEditingController();
   DateTime? data;
   bool isNovo = false;
 
@@ -30,7 +31,7 @@ class CadastroColheitaState extends State<CadastroColheita> {
     isNovo = widget.colheita.codigo == null || widget.colheita.codigo == 0;
     if (!isNovo) {
       _informacoesController.text = widget.colheita.informacoes;
-      _pesoBrutoController.text = widget.colheita.pesoBruto.toString();
+      _pesoBrutoController.text = widget.colheita.pesoBruto.toStringAsFixed(2);
       data = widget.colheita.data;
     }
     super.initState();
@@ -41,7 +42,7 @@ class CadastroColheitaState extends State<CadastroColheita> {
     return Scaffold(
       appBar: AppBar(),
       body: GradientContainerBody(
-          padding: EdgeInsets.all(8),
+          padding: const EdgeInsets.all(8),
           child: Form(
             key: _formKey,
             child: ListView(
@@ -56,7 +57,8 @@ class CadastroColheitaState extends State<CadastroColheita> {
                     labelTextValue: "Peso bruto",
                     controller: _pesoBrutoController,
                     inputFormatters: [
-                      FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                      FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d+\.?\d{0,2}')),
                     ],
                     tipoTeclado: TextInputType.number,
                     onChanged: (value) {
@@ -77,7 +79,7 @@ class CadastroColheitaState extends State<CadastroColheita> {
                         data == null
                             ? 'Escolha um data de colheita!'
                             : 'Data do colheita: ${DateFormat("dd/MM/yyyy").format(data!)}',
-                        style: TextStyle(
+                        style: const TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
                       DefaultButton('Escolher data', Colors.white, Colors.green,
@@ -101,12 +103,25 @@ class CadastroColheitaState extends State<CadastroColheita> {
 
   Future<void> save() async {
     ColheitaDao colheitaDao = ColheitaDao();
-    Colheita colheita;
-    if (isNovo) {
-      colheita = await colheitaDao.save(widget.colheita);
+    Colheita colheita = isNovo
+        ? await colheitaDao.save(widget.colheita)
+        : await colheitaDao.update(widget.colheita);
+    if (colheita.codigo != null && colheita.codigo != 0) {
+      PomarListProvider pomarListProvider = Provider.of<PomarListProvider>(context, listen: false);
+      if (isNovo) {
+        widget.colheita.codigo = colheita.codigo;
+        pomarListProvider.addColheita(colheita);
+        PageUtil.successAlertDialog("Colheita cadastrada com sucesso!", context);
+      } else {
+        pomarListProvider.replaceColheita(colheita);
+        PageUtil.successAlertDialog("Colheita alterada com sucesso!", context);
+      }
     } else {
-      colheita = await colheitaDao.update(widget.colheita);
+      PageUtil.failureAlertDialog(
+          "Erro ao ${isNovo ? 'cadastrar' : 'alterar'} a colheita", context);
     }
+
+    reloadInputComponents(colheita);
   }
 
   void _pickDateDialog() {
@@ -124,5 +139,16 @@ class CadastroColheitaState extends State<CadastroColheita> {
         widget.colheita.data = pickedDate;
       });
     });
+  }
+
+   void reloadInputComponents(Colheita colheita) {
+    isNovo = colheita.codigo == null || colheita.codigo == 0;
+    if (!isNovo) {
+      setState(() {
+        _informacoesController.text = colheita.informacoes;
+        _pesoBrutoController.text = colheita.pesoBruto.toStringAsFixed(2);
+        data = colheita.data;
+      });
+    }
   }
 }

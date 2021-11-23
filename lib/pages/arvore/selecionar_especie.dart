@@ -13,7 +13,7 @@ import 'package:pomar_app/pages/arvore/cadastro_arvore.dart';
 
 class SelecionarEspecie extends StatefulWidget {
   final Arvore arvore;
-  SelecionarEspecie({required this.arvore, Key? key}) : super(key: key);
+  const SelecionarEspecie({required this.arvore, Key? key}) : super(key: key);
 
   @override
   _SelecionarEspecieState createState() => _SelecionarEspecieState();
@@ -21,7 +21,7 @@ class SelecionarEspecie extends StatefulWidget {
 
 class _SelecionarEspecieState extends State<SelecionarEspecie> {
   List<Especie> especies = [];
-  TextEditingController _descricaoController = TextEditingController();
+  final TextEditingController _descricaoController = TextEditingController();
   Especie? especieAdd;
 
   @override
@@ -41,7 +41,7 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                 snapshot.data != null) {
               especies = snapshot.data!;
               return GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   crossAxisSpacing: defaultHorizontalPadding,
                   mainAxisSpacing: defaultHorizontalPadding,
@@ -60,7 +60,7 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                       child: Card(
                           child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [Icon(Icons.add), Text("Adicionar novo", style: TextStyle(color: Colors.black),)],
+                        children: const [Icon(Icons.add), Text("Adicionar novo", style: TextStyle(color: Colors.black),)],
                       )),
                     );
                   }
@@ -74,13 +74,13 @@ class _SelecionarEspecieState extends State<SelecionarEspecie> {
                     },
                     child: Card(
                       child:
-                          Center(child: Text("${especies[index].descricao}", style: TextStyle(color: Colors.black),)),
+                          Center(child: Text(especies[index].descricao, style: const TextStyle(color: Colors.black),)),
                     ),
                   );
                 },
               );
             }
-            return LoadingPage();
+            return const LoadingPage();
           },
         ),
       ),

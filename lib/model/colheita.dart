@@ -14,7 +14,7 @@ class Colheita {
     arvoreCodigo = colheitaMap['arvoreCodigo'];
     informacoes = colheitaMap['informacoes'];
     data = DateTime.fromMillisecondsSinceEpoch(colheitaMap['data']);
-    pesoBruto = colheitaMap['pesoBruto'];
+    pesoBruto = double.parse(colheitaMap['pesoBruto'].toString());
   }
 
   Map<String, dynamic> toMap() {

@@ -21,11 +21,11 @@ class ColheitaDao extends Dao {
   Future<Colheita> update(Colheita colheita) async {
     final database = await openDatabaseConnection();
 
-    int codigo = await database.update(databaseName, colheita.toMap(),
+    int linhasAfetadas = await database.update(databaseName, colheita.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [colheita.codigo]);
-    return codigo == 0 ? Colheita() : await findByCodigo(codigo);
+    return linhasAfetadas == 0 ? Colheita() : await findByCodigo(colheita.codigo!);
   }
 
   Future<bool> delete(Colheita colheita) async {

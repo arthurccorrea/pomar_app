@@ -26,11 +26,11 @@ class _PomarCardState extends State<PomarCard> {
             borderRadius: BorderRadius.circular(25),
             color: Colors.white,
             image: DecorationImage(
-                image: AssetImage("images/tree.png"),
+                image: const AssetImage("images/tree.png"),
                 colorFilter: ColorFilter.mode(
                     Colors.white.withOpacity(0.2), BlendMode.dstATop))),
         child: Center(
-          child: Text(widget.pomar.nome, style: TextStyle(color: Colors.black),),
+          child: Text(widget.pomar.nome, style: const TextStyle(color: Colors.black),),
         ),
       ),
     );

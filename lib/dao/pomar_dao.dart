@@ -26,11 +26,11 @@ class PomarDao extends Dao {
   Future<Pomar> update(Pomar pomar) async {
     final database = await openDatabaseConnection();
 
-    int codigo = await database.update(databaseName, pomar.toMap(),
+    int linhasAfetadas = await database.update(databaseName, pomar.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [pomar.codigo]);
-    return codigo == 0 ? Pomar() : await findByCodigo(codigo);
+    return linhasAfetadas == 0 ? Pomar() : await findByCodigo(pomar.codigo!);
   }
 
   Future<bool> delete(Pomar pomar) async {
@@ -49,6 +49,14 @@ class PomarDao extends Dao {
     List<Pomar> pomares = List.generate(maps.length, (index) {
       return setValues(maps, index);
     });
+
+    ArvoreDao arvoreDao = ArvoreDao();
+    for (Pomar pomar in pomares) {
+      List<Arvore> arvores = await arvoreDao.findByPomar(pomar.codigo!);
+      if (arvores.isNotEmpty) {
+        pomar.arvores = arvores;
+      }
+    }
 
     return pomares;
   }

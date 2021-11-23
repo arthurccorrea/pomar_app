@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pomar_app/core/widgets/gradient_container_body.dart';
 
 class LoadingPage extends StatefulWidget {
-  LoadingPage({Key? key}) : super(key: key);
+  const LoadingPage({Key? key}) : super(key: key);
 
   @override
   _LoadingPageState createState() => _LoadingPageState();
