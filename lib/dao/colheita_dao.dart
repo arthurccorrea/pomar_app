@@ -5,13 +5,15 @@ import 'package:pomar_app/model/colheita.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ColheitaDao extends Dao {
-  final String databaseName = "COLHEITA";
+  static String tableName = "COLHEITA";
+  final String tableColumns =
+      "$tableName.CODIGO, $tableName.ARVORE_CODIGO, $tableName.INFORMACOES, $tableName.DATA, $tableName.PESO_BRUTO";
 
   Future<Colheita> save(Colheita colheita) async {
     final database = await openDatabaseConnection();
     log("Salvando ${colheita.toString()}");
     int codigo = await database.insert(
-      databaseName,
+      tableName,
       colheita.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -21,25 +23,27 @@ class ColheitaDao extends Dao {
   Future<Colheita> update(Colheita colheita) async {
     final database = await openDatabaseConnection();
 
-    int linhasAfetadas = await database.update(databaseName, colheita.toMap(),
+    int linhasAfetadas = await database.update(tableName, colheita.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [colheita.codigo]);
-    return linhasAfetadas == 0 ? Colheita() : await findByCodigo(colheita.codigo!);
+    return linhasAfetadas == 0
+        ? Colheita()
+        : await findByCodigo(colheita.codigo!);
   }
 
   Future<bool> delete(Colheita colheita) async {
     final database = await openDatabaseConnection();
 
     int linhasAfetadas = await database
-        .delete(databaseName, where: "CODIGO=?", whereArgs: [colheita.codigo]);
+        .delete(tableName, where: "CODIGO=?", whereArgs: [colheita.codigo]);
     return linhasAfetadas > 0;
   }
 
   Future<List<Colheita>> list() async {
     final database = await openDatabaseConnection();
 
-    List<Map<String, Object?>> maps = await database.query(databaseName);
+    List<Map<String, Object?>> maps = await database.query(tableName);
 
     List<Colheita> colheitas = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -51,8 +55,8 @@ class ColheitaDao extends Dao {
   Future<Colheita> findByCodigo(int codigo, {Database? database}) async {
     database ??= await openDatabaseConnection();
 
-    List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "CODIGO=?", whereArgs: [codigo]);
+    List<Map<String, Object?>> maps =
+        await database.query(tableName, where: "CODIGO=?", whereArgs: [codigo]);
 
     List<Colheita> colheita = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -61,18 +65,58 @@ class ColheitaDao extends Dao {
     return colheita[0];
   }
 
-  Future<List<Colheita>> findByArvore(int arvoreCodigo, {Database? database}) async {
+  Future<List<Colheita>> findByArvore(int arvoreCodigo,
+      {Database? database}) async {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "ARVORE_CODIGO=?", whereArgs: [arvoreCodigo]);
+        .query(tableName, where: "ARVORE_CODIGO=?", whereArgs: [arvoreCodigo]);
 
     List<Colheita> colheitas = List.generate(maps.length, (index) {
       return setValues(maps, index);
     });
 
     return colheitas;
-  } 
+  }
+
+  Future<List<Colheita>> findColheitasByPomar(int pomarCodigo,
+      {Database? database}) async {
+    database ??= await openDatabaseConnection();
+
+    List<Map<String, Object?>> maps = await database.rawQuery(
+        "SELECT $tableColumns FROM $tableName INNER JOIN ARVORE ON $tableName.ARVORE_CODIGO = ARVORE.CODIGO INNER JOIN POMAR ON ARVORE.POMAR_CODIGO = POMAR.CODIGO WHERE POMAR.CODIGO=?",
+        [pomarCodigo]);
+    List<Colheita> colheitas = List.generate(maps.length, (index) {
+      return setValues(maps, index);
+    });
+
+    return colheitas;
+  }
+
+  Future<List<Colheita>> findColheitasByEspecie(int especieCodigo,
+      {Database? database}) async {
+    database ??= await openDatabaseConnection();
+
+    List<Map<String, Object?>> maps = await database.rawQuery(
+        "SELECT $tableColumns FROM $tableName INNER JOIN ARVORE ON $tableName.ARVORE_CODIGO = ARVORE.CODIGO WHERE ARVORE.ESPECIE_CODIGO=?",
+        [especieCodigo]);
+    List<Colheita> colheitas = List.generate(maps.length, (index) {
+      return setValues(maps, index);
+    });
+
+    return colheitas;
+  }
+
+  Future<List<Colheita>> findColheitaByData(DateTime dataInicio, DateTime dataTermino, {Database? database}) async {
+    database ??= await openDatabaseConnection();
+
+    List<Map<String, Object?>> maps = await database.query(tableName, where: "DATA BETWEEN ? AND ?", whereArgs: [dataInicio.millisecondsSinceEpoch, dataTermino.millisecondsSinceEpoch]);
+    List<Colheita> colheitas = List.generate(maps.length, (index) {
+      return setValues(maps, index);
+    });
+
+    return colheitas;
+  }
 
   Colheita setValues(List<Map<String, Object?>> maps, int index) {
     return Colheita.fromMap({

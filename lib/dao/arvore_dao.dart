@@ -7,13 +7,13 @@ import 'package:pomar_app/model/colheita.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ArvoreDao extends Dao {
-  final String databaseName = "ARVORE";
+  final String tableName = "ARVORE";
 
   Future<Arvore> save(Arvore arvore) async {
     final database = await openDatabaseConnection();
     log("Salvando ${arvore.toString()}");
     int codigo = await database.insert(
-      databaseName,
+      tableName,
       arvore.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -23,7 +23,7 @@ class ArvoreDao extends Dao {
   Future<Arvore> update(Arvore arvore) async {
     final database = await openDatabaseConnection();
 
-    int linhasAfetadas = await database.update(databaseName, arvore.toMap(),
+    int linhasAfetadas = await database.update(tableName, arvore.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [arvore.codigo]);
@@ -34,14 +34,14 @@ class ArvoreDao extends Dao {
     final database = await openDatabaseConnection();
 
     int linhasAfetadas = await database
-        .delete(databaseName, where: "CODIGO=?", whereArgs: [arvore.codigo]);
+        .delete(tableName, where: "CODIGO=?", whereArgs: [arvore.codigo]);
     return linhasAfetadas > 0;
   }
 
   Future<List<Arvore>> list() async {
     final database = await openDatabaseConnection();
 
-    List<Map<String, Object?>> maps = await database.query(databaseName);
+    List<Map<String, Object?>> maps = await database.query(tableName);
 
     List<Arvore> arvores = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -54,7 +54,7 @@ class ArvoreDao extends Dao {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "CODIGO=?", whereArgs: [codigo]);
+        .query(tableName, where: "CODIGO=?", whereArgs: [codigo]);
 
     List<Arvore> arvores = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -68,7 +68,7 @@ class ArvoreDao extends Dao {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "POMAR_CODIGO=?", whereArgs: [pomarCodigo]);
+        .query(tableName, where: "POMAR_CODIGO=?", whereArgs: [pomarCodigo]);
 
     List<Arvore> arvores = List.generate(maps.length, (index) {
       return setValues(maps, index);

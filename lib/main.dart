@@ -14,6 +14,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
         create: (context) => PomarListProvider(),
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           locale: const Locale('pt', 'BR'),
           title: 'Pomar app',
           theme: ThemeData(

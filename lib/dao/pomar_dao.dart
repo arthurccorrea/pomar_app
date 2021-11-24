@@ -7,13 +7,13 @@ import 'package:pomar_app/model/pomar.dart';
 import 'package:sqflite/sqflite.dart';
 
 class PomarDao extends Dao {
-  final String databaseName = "POMAR";
+  final String tableName = "POMAR";
 
   Future<Pomar> save(Pomar pomar) async {
     final database = await openDatabaseConnection();
     log("Salvando ${pomar.toString()}");
     int codigo = await database.insert(
-      databaseName,
+      tableName,
       pomar.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -26,7 +26,7 @@ class PomarDao extends Dao {
   Future<Pomar> update(Pomar pomar) async {
     final database = await openDatabaseConnection();
 
-    int linhasAfetadas = await database.update(databaseName, pomar.toMap(),
+    int linhasAfetadas = await database.update(tableName, pomar.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [pomar.codigo]);
@@ -37,14 +37,14 @@ class PomarDao extends Dao {
     final database = await openDatabaseConnection();
 
     int linhasAfetadas = await database
-        .delete(databaseName, where: "CODIGO=?", whereArgs: [pomar.codigo]);
+        .delete(tableName, where: "CODIGO=?", whereArgs: [pomar.codigo]);
     return linhasAfetadas > 0;
   }
 
   Future<List<Pomar>> list() async {
     final database = await openDatabaseConnection();
     log("Listando pomares");
-    List<Map<String, Object?>> maps = await database.query(databaseName);
+    List<Map<String, Object?>> maps = await database.query(tableName);
 
     List<Pomar> pomares = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -65,7 +65,7 @@ class PomarDao extends Dao {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "CODIGO=?", whereArgs: [codigo]);
+        .query(tableName, where: "CODIGO=?", whereArgs: [codigo]);
 
     List<Pomar> pomares = List.generate(maps.length, (index) {
       return setValues(maps, index);

@@ -5,13 +5,13 @@ import 'package:pomar_app/model/especie.dart';
 import 'package:sqflite/sqflite.dart';
 
 class EspecieDao extends Dao {
-  final String databaseName = "ESPECIE";
+  final String tableName = "ESPECIE";
 
   Future<Especie> save(Especie especie) async {
     final database = await openDatabaseConnection();
     log("Salvando ${especie.toString()}");
     int codigo = await database.insert(
-      databaseName,
+      tableName,
       especie.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
@@ -21,7 +21,7 @@ class EspecieDao extends Dao {
   Future<Especie> update(Especie especie) async {
     final database = await openDatabaseConnection();
 
-    int linhasAfetadas = await database.update(databaseName, especie.toMap(),
+    int linhasAfetadas = await database.update(tableName, especie.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
         where: "CODIGO = ?",
         whereArgs: [especie.codigo]);
@@ -32,14 +32,14 @@ class EspecieDao extends Dao {
     final database = await openDatabaseConnection();
 
     int linhasAfetadas = await database
-        .delete(databaseName, where: "CODIGO=?", whereArgs: [especie.codigo]);
+        .delete(tableName, where: "CODIGO=?", whereArgs: [especie.codigo]);
     return linhasAfetadas > 0;
   }
 
   Future<List<Especie>> list() async {
     final database = await openDatabaseConnection();
 
-    List<Map<String, Object?>> maps = await database.query(databaseName);
+    List<Map<String, Object?>> maps = await database.query(tableName);
 
     List<Especie> especies = List.generate(maps.length, (index) {
       return setValues(maps, index);
@@ -52,7 +52,7 @@ class EspecieDao extends Dao {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
-        .query(databaseName, where: "CODIGO=?", whereArgs: [codigo]);
+        .query(tableName, where: "CODIGO=?", whereArgs: [codigo]);
 
     List<Especie> especies = List.generate(maps.length, (index) {
       return setValues(maps, index);
