@@ -61,7 +61,7 @@ class PomarDao extends Dao {
     return pomares;
   }
 
-  Future<Pomar> findByCodigo(int codigo, {Database? database}) async {
+  Future<Pomar> findByCodigo(int codigo, {Database? database, bool comArvores = true}) async {
     database ??= await openDatabaseConnection();
 
     List<Map<String, Object?>> maps = await database
@@ -72,8 +72,10 @@ class PomarDao extends Dao {
     });
     ArvoreDao arvoreDao = ArvoreDao();
     Pomar pomar = pomares[0];
-    List<Arvore> arvores = await arvoreDao.findByPomar(codigo);
-    pomar.arvores = arvores;
+    if (comArvores) {
+      List<Arvore> arvores = await arvoreDao.findByPomar(codigo);
+      pomar.arvores = arvores;
+    }
 
     return pomar;
   }

@@ -1,6 +1,8 @@
 import 'dart:developer';
 
+import 'package:pomar_app/dao/arvore_dao.dart';
 import 'package:pomar_app/dao/dao.dart';
+import 'package:pomar_app/model/arvore.dart';
 import 'package:pomar_app/model/colheita.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -76,6 +78,10 @@ class ColheitaDao extends Dao {
       return setValues(maps, index);
     });
 
+    for (Colheita colheita in colheitas) {
+      complementaColheita(colheita);
+    }
+
     return colheitas;
   }
 
@@ -89,6 +95,10 @@ class ColheitaDao extends Dao {
     List<Colheita> colheitas = List.generate(maps.length, (index) {
       return setValues(maps, index);
     });
+
+    for (Colheita colheita in colheitas) {
+      complementaColheita(colheita);
+    }
 
     return colheitas;
   }
@@ -104,6 +114,10 @@ class ColheitaDao extends Dao {
       return setValues(maps, index);
     });
 
+    for (Colheita colheita in colheitas) {
+      complementaColheita(colheita);
+    }
+
     return colheitas;
   }
 
@@ -115,7 +129,17 @@ class ColheitaDao extends Dao {
       return setValues(maps, index);
     });
 
+    for (Colheita colheita in colheitas) {
+      complementaColheita(colheita);
+    }
+
     return colheitas;
+  }
+
+  Future<void> complementaColheita(Colheita colheita) async {
+    ArvoreDao arvoreDao = ArvoreDao();
+    Arvore arvore = await arvoreDao.findByCodigo(colheita.arvoreCodigo);
+    colheita.arvore = arvore;
   }
 
   Colheita setValues(List<Map<String, Object?>> maps, int index) {

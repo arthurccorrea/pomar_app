@@ -1,3 +1,5 @@
+import 'package:pomar_app/model/arvore.dart';
+
 class Colheita {
   int? codigo;
   int arvoreCodigo = 0;
@@ -6,6 +8,8 @@ class Colheita {
 
   /// Gramas
   double pesoBruto = 0;
+
+  Arvore? arvore;
 
   Colheita();
 
